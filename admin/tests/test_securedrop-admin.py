@@ -641,6 +641,7 @@ class TestSiteConfig(object):
         verify_desc_consistency_optional)
     verify_prompt_smtp_relay = verify_prompt_not_empty
     verify_prompt_smtp_relay_port = verify_desc_consistency
+    verify_prompt_server_timezone = verify_desc_consistency
     verify_prompt_daily_reboot_time = verify_desc_consistency
     verify_prompt_sasl_domain = verify_desc_consistency_allow_empty
     verify_prompt_sasl_username = verify_prompt_not_empty

@@ -28,6 +28,7 @@ import logging
 import os
 import io
 import re
+import time
 import string
 import subprocess
 import sys
@@ -62,6 +63,13 @@ class SiteConfig(object):
                 return True
             raise ValidationError(
                 message="Must be an integer between 0 and 23")
+
+    class ValidateTimezone(Validator):
+        def validate(self, document):
+            if re.match(r'[A-Za-z]{3}', document.text):
+                return True
+            raise ValidationError(
+                message="Must be a valid 3-character timezone code")
 
     class ValidateUser(Validator):
         def validate(self, document):
@@ -255,6 +263,10 @@ class SiteConfig(object):
             ['ssh_users', 'sd', str,
              u'Username for SSH access to the servers',
              SiteConfig.ValidateUser(),
+             None],
+            ['server_timezone', time.strftime('%Z', time.localtime()), str,
+             u'Timezone of the server',
+             SiteConfig.ValidateTimezone(),
              None],
             ['daily_reboot_time', 4, int,
              u'Daily reboot time of the server (24-hour clock)',
