@@ -35,6 +35,7 @@ import sys
 import types
 import prompt_toolkit
 from prompt_toolkit.validation import Validator, ValidationError
+from prompt_toolkit.auto_suggest import AutoSuggest, Suggestion
 import yaml
 
 sdlog = logging.getLogger(__name__)
@@ -46,6 +47,29 @@ class FingerprintException(Exception):
 
 class JournalistAlertEmailException(Exception):
     pass
+
+
+class AutoSuggestTimezone(AutoSuggest):
+
+    def __init__(self):
+        self.zones = self.get_tzdata()
+
+    def get_tzdata(self):
+        zones = []
+        with io.open('/usr/share/zoneinfo/zone.tab') as f:
+            for line in f.readlines():
+                if line.startswith('#'):
+                    continue
+                (code, offset, name) = line.split('\t')[:3]
+                zones.append(name.strip())
+        return zones
+
+    def get_suggestion(self, buffer, document):
+
+        if document.text.strip():
+            for zone in self.zones:
+                if zone.startswith(document.text):
+                    return Suggestion(zone)
 
 
 class SiteConfig(object):
